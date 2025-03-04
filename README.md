@@ -1,6 +1,5 @@
 # Custom Zsh Configuration
 
----
 
 ## Installation Guide
 
@@ -16,9 +15,9 @@ sh -c "$(curl -fsSL https://raw.github.com/ohmyzsh/ohmyzsh/master/tools/install.
 ### 2️⃣ Download External Plugins
 To enhance the functionality of your terminal, download the following Zsh plugins:
 
-- **Zsh Autosuggestions** → [GitHub Link](https://github.com/zsh-users/zsh-autosuggestions)
-- **Zsh Syntax Highlighting** → [GitHub Link](https://github.com/zsh-users/zsh-syntax-highlighting)
-- **Zsh Completions** → [GitHub Link](https://github.com/zsh-users/zsh-completions)
+- **Zsh Autosuggestions** →          [GitHub Link](https://github.com/zsh-users/zsh-autosuggestions)
+- **Zsh Syntax Highlighting** →      [GitHub Link](https://github.com/zsh-users/zsh-syntax-highlighting)
+- **Zsh Completions** →              [GitHub Link](https://github.com/zsh-users/zsh-completions)
 - **Zsh History Substring Search** → [GitHub Link](https://github.com/zsh-users/zsh-history-substring-search)
 
 Clone each plugin into your `~/.oh-my-zsh/plugins/` directory:
