@@ -11,6 +11,7 @@ plugins=(
 	zsh-syntax-highlighting
 	zsh-completions 
   zsh-history-substring-search
+  zsh-interactive-cd
 )
 
 source $ZSH/oh-my-zsh.sh
