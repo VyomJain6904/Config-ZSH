@@ -1,6 +1,6 @@
 # Custom Zsh Configuration
 
-A full-featured Zsh setup with external plugins, development toolchains, and pentesting utilities for developers, DevOps engineers, and security professionals.
+A full-featured Zsh setup with external plugins, development toolchains, and Pentesting utilities for developers, DevOps engineers, and security professionals.
 
 ---
 
@@ -18,12 +18,6 @@ sh -c "$(curl -fsSL https://raw.github.com/ohmyzsh/ohmyzsh/master/tools/install.
 
 To enhance the functionality of your terminal, download the following Zsh plugins:
 
--   **Zsh Autosuggestions** → [GitHub Link](https://github.com/zsh-users/zsh-autosuggestions)
--   **Zsh Syntax Highlighting** → [GitHub Link](https://github.com/zsh-users/zsh-syntax-highlighting)
--   **Zsh Completions** → [GitHub Link](https://github.com/zsh-users/zsh-completions)
--   **Zsh History Substring Search** → [GitHub Link](https://github.com/zsh-users/zsh-history-substring-search)
--   **Zsh Interactive CD** → [GithubLink](https://github.com/mrjohannchang/zsh-interactive-cd)
-
 Clone each plugin into your `~/.oh-my-zsh/plugins/` directory:
 
 ```sh
@@ -34,6 +28,14 @@ git clone https://github.com/zsh-users/zsh-history-substring-search ~/.oh-my-zsh
 git clone https://github.com/mrjohannchang/zsh-interactive-cd ~/.oh-my-zsh/plugins/zsh-interactive-cd
 ```
 
+### Install the following Plugins :
+```sh
+sudo apt install fzf eza fd yazi jq zoxide fastfetch batcat tldr ripgrep poppler -y # For Ubuntu / Debain Based
+```
+or 
+```sh
+sudo pacman -Sy fzf eza fd yazi jq zoxide fastfetch bat tldr ripgrep poppler # For Arch Based 
+```
 ---
 
 ### 3️⃣ Nerdfont Download
@@ -45,30 +47,11 @@ wget https://github.com/ryanoasis/nerd-fonts/releases/download/v3.4.0/JetBrainsM
 unzip JetBrainsMono.zip
 fc-cache -fv
 ```
-
 ---
 
 ### Update `.zshrc` Configuration
 
-After installing the plugins, open your **.zshrc** file and add the following lines at the end:
-
-```sh
-# Fix terminal autocomplete
-autoload -Uz compinit && compinit
-
-# Enable Plugins
-plugins=(
-    ssh
-    git
-    sublime
-    fzf
-    zsh-autosuggestions
-    zsh-completions
-    zsh-history-substring-search
-    zsh-syntax-highlighting
-    zsh-interactive-cd
-)
-```
+After installing the plugins, open your **.zshrc** file and copy the code in your **.zshrc** file.
 
 ---
 
