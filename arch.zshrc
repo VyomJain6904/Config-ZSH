@@ -54,7 +54,7 @@ git_branch() {
 # -----------------------------
 # Github Workflow with fzf
 # -----------------------------
-function gtg() {
+function gt() {
     # Colors
     local RED=$'\033[1;31m'
     local GREEN=$'\033[1;32m'
@@ -89,6 +89,7 @@ function gtg() {
             --border=rounded \
             --height=40% \
             --reverse \
+            --cycle \
         --bind='ctrl-c:abort,esc:abort')
 
         if [[ $? -ne 0 ]] || [[ -z "$choice" ]]; then
@@ -180,12 +181,11 @@ alias ff="fastfetch"
 alias cat="bat "
 alias start="npm run dev"
 alias code="code-insiders ."
-alias gt="git clone"
-alias gts="git status"
-alias gtr="git remote set-url origin "
-alias gta="git add ."
-alias gtc="git commit -m "
-alias gtp="git push -u origin main"
+alias gc="git clone"
+alias gs="git status"
+alias gr="git remote set-url origin "
+alias ga="git add ."
+alias gp="git push -u origin main"
 
 
 # -----------------------------
@@ -242,18 +242,18 @@ function y() {
 # fzf & fd Config
 # -----------------------------
 FD_EXCLUDES="--strip-cwd-prefix \
---exclude .git \
---exclude node_modules \
---exclude .idea \
---exclude .cargo \
---exclude .bash \
---exclude .cache \
---exclude .var \
---exclude .rustup \
---exclude .dotnet \
---exclude .claude \
---exclude .icons \
---exclude .gnupg"
+            --exclude .git \
+            --exclude node_modules \
+            --exclude .idea \
+            --exclude .cargo \
+            --exclude .bash \
+            --exclude .cache \
+            --exclude .var \
+            --exclude .rustup \
+            --exclude .dotnet \
+            --exclude .claude \
+            --exclude .icons \
+            --exclude .gnupg"
 
 export FZF_DEFAULT_COMMAND="fd --type=f $FD_EXCLUDES"
 export FZF_CTRL_T_COMMAND="$FZF_DEFAULT_COMMAND"
@@ -261,33 +261,33 @@ export FZF_ALT_C_COMMAND="fd --type=d $FD_EXCLUDES"
 
 # Dracula fzf theme
 export FZF_DEFAULT_OPTS="
---ansi
---height=40%
---layout=reverse
---border=rounded
---prompt='❯ '
---pointer='➤ '
---marker='✓ '
---color=fg:#f8f8f2,bg:#282a36,hl:#bd93f9
---color=fg+:#f8f8f2,bg+:#44475a,hl+:#bd93f9
---color=info:#ffb86c,prompt:#50fa7b,pointer:#bd93f9,marker:#ff5555,spinner:#ffb86c,header:#8be9fd
+    --ansi
+    --height=40%
+    --layout=reverse
+    --border=rounded
+    --prompt='❯ '
+    --pointer='➤ '
+    --marker='✓ '
+    --color=fg:#f8f8f2,bg:#282a36,hl:#bd93f9
+    --color=fg+:#f8f8f2,bg+:#44475a,hl+:#bd93f9
+    --color=info:#ffb86c,prompt:#50fa7b,pointer:#bd93f9,marker:#ff5555,spinner:#ffb86c,header:#8be9fd
 "
 
 fzf() {
-  local show_hidden=false
-  local args=()
-  while [[ $# -gt 0 ]]; do
-    case $1 in
-      -l) show_hidden=true; shift ;;
-      *) args+=("$1"); shift ;;
-    esac
-  done
+    local show_hidden=false
+    local args=()
+    while [[ $# -gt 0 ]]; do
+        case $1 in
+        -l) show_hidden=true; shift ;;
+        *) args+=("$1"); shift ;;
+        esac
+    done
 
-  if [[ "$show_hidden" == true ]]; then
-    FZF_DEFAULT_COMMAND="fd --type=f --hidden $FD_EXCLUDES" command fzf "${args[@]}"
-  else
-    command fzf "${args[@]}"
-  fi
+    if [[ "$show_hidden" == true ]]; then
+        FZF_DEFAULT_COMMAND="fd --type=f --hidden $FD_EXCLUDES" command fzf "${args[@]}"
+    else
+        command fzf "${args[@]}"
+    fi
 }
 
 _fzf_compgen_path() { fd --exclude .git . "$1"; }
@@ -299,13 +299,13 @@ export FZF_CTRL_T_OPTS="--preview '$show_file_or_dir_preview'"
 export FZF_ALT_C_OPTS="--preview 'eza --tree --color=always {} | head -200'"
 
 _fzf_comprun() {
-  local command=$1; shift
-  case "$command" in
-    cd)           fzf --preview 'eza --tree --color=always {} | head -200' "$@" ;;
-    export|unset) fzf --preview "eval 'echo ${}'" "$@" ;;
-    ssh)          fzf --preview 'dig {}' "$@" ;;
-    *)            fzf --preview "$show_file_or_dir_preview" "$@" ;;
-  esac
+    local command=$1; shift
+    case "$command" in
+        cd)           fzf --preview 'eza --tree --color=always {} | head -200' "$@" ;;
+        export|unset) fzf --preview "eval 'echo ${}'" "$@" ;;
+        ssh)          fzf --preview 'dig {}' "$@" ;;
+        *)            fzf --preview "$show_file_or_dir_preview" "$@" ;;
+    esac
 }
 
 
