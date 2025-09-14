@@ -20,22 +20,20 @@ plugins=(
 )
 
 source $ZSH/oh-my-zsh.sh
+source ~/.oh-my-zsh/plugins/zsh-defer/zsh-defer.plugin.zsh
+zsh-defer source /usr/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
+zsh-defer source /usr/share/zsh-history-substring-search/zsh-history-substring-search.zsh
 
 
 # -----------------------------
 # Function for IP Address
 # -----------------------------
+_ip_cache=""
 get_ip_address() {
-    local ip
-    ip=$(ip route get 1.1.1.1 2>/dev/null | awk '/src/ {print $7}' | head -1)
-    if [[ -z "$ip" ]]; then
-        ip=$(ip -4 addr show | awk '/inet.*scope global/ {print $2}' | cut -d/ -f1 | head -1)
-    fi
-    if [[ -n "$ip" ]]; then
-        echo "%{$fg[green]%}$ip%{$reset_color%}"
-    else
-        echo "%{$fg[red]%}No IP%{$reset_color%}"
-    fi
+    [[ -n "$_ip_cache" ]] && { echo "%{$fg[green]%}$_ip_cache%{$reset_color%}"; return; }
+    _ip_cache=$(ip route get 1.1.1.1 2>/dev/null | awk '/src/ {print $7}' | head -1)
+    [[ -z "$_ip_cache" ]] && _ip_cache="No IP"
+    echo "%{$fg[green]%}$_ip_cache%{$reset_color%}"
 }
 
 
@@ -43,11 +41,9 @@ get_ip_address() {
 # Function for Git Branch
 # -----------------------------
 git_branch() {
-    if git rev-parse --is-inside-work-tree >/dev/null 2>&1; then
-        local branch
-        branch=$(git symbolic-ref --short HEAD 2>/dev/null || git rev-parse --short HEAD 2>/dev/null)
-        echo "[%{$fg[blue]%}  $branch%{$reset_color%}]"
-    fi
+    local branch
+    branch=$(git symbolic-ref --quiet --short HEAD 2>/dev/null || git describe --tags --always 2>/dev/null)
+    [[ -n $branch ]] && echo "[%{$fg[blue]%}  $branch%{$reset_color%}]"
 }
 
 
@@ -163,22 +159,29 @@ PROMPT='[%F{red}󰣇 %c%f] [%F{green}  $(get_ip_address)%f] $(git_branch)➤ 
 # -----------------------------
 # Aliases
 # -----------------------------
+
+# System
 alias cls="clear"
 alias cl="clear"
 alias upd="sudo pacman -Syu"
 alias updapp="sudo yay -Syu"
 alias rmf="sudo rm -rf"
-alias cln='sudo pacman -Rns $(pacman -Qdtq) && sudo pacman -Sc --noconfirm'
-alias mk="mkdir "
-alias exir="exit"
-alias ins="sudo pacman -S "
-alias l="eza --color=always --long --git --icons=always --tree --level=1 --no-time --no-user -all"
-alias ll="eza --color=always --long --git --icons=always --tree --level=2 --no-time --no-user -all"
-alias omz="omz update"
-alias nr="sudo systemctl restart NetworkManager"
 alias remove="sudo pacman -Rns "
+alias cln='sudo pacman -Rns $(pacman -Qdtq) && sudo pacman -Sc --noconfirm'
+alias ins="sudo pacman -S "
+alias omz="omz update"
+alias exir="exit"
+alias mk="mkdir "
+alias nr="sudo systemctl restart NetworkManager"
 alias ff="fastfetch"
+alias his="history | fzf --tac --preview 'echo {1..}' | sed 's/ *[0-9]* *//' | xargs -r zsh -i -c"
+
+# Files
+alias l="eza -la --icons --git --color=always --level=1 --no-time --no-user"
+alias ll="eza -la --icons --git --color=always --level=2 --no-time --no-user"
 alias cat="bat "
+
+# Dev
 alias start="npm run dev"
 alias code="code-insiders ."
 alias gc="git clone"
@@ -193,7 +196,7 @@ alias gp="git push -u origin main"
 # -----------------------------
 if [ -f /usr/share/zsh-autosuggestions/zsh-autosuggestions.zsh ]; then
     . /usr/share/zsh-autosuggestions/zsh-autosuggestions.zsh
-    ZSH_AUTOSUGGEST_HIGHLIGHT_STYLE='fg=#999999'
+    ZSH_AUTOSUGGEST_HIGHLIGHT_STYLE='fg=#6272a4'
 fi
 
 
@@ -201,7 +204,7 @@ fi
 # Go Config
 # -----------------------------
 export GOPATH=$HOME/go
-export PATH=$PATH:/usr/lib/go/bin:$GOPATH/bin
+export PATH="$HOME/go/bin:/usr/lib/go/bin:$PNPM_HOME:$PATH"
 
 
 # -----------------------------
@@ -225,7 +228,7 @@ esac
 # -----------------------------
 # Yazi Setup
 # -----------------------------
-export EDITOR="subl"
+export EDITOR="code-insiders"
 export VISUAL="$EDITOR"
 
 function y() {
@@ -242,18 +245,18 @@ function y() {
 # fzf & fd Config
 # -----------------------------
 FD_EXCLUDES="--strip-cwd-prefix \
-            --exclude .git \
-            --exclude node_modules \
-            --exclude .idea \
-            --exclude .cargo \
-            --exclude .bash \
-            --exclude .cache \
-            --exclude .var \
-            --exclude .rustup \
-            --exclude .dotnet \
-            --exclude .claude \
-            --exclude .icons \
-            --exclude .gnupg"
+--exclude .git \
+--exclude node_modules \
+--exclude .idea \
+--exclude .cargo \
+--exclude .bash \
+--exclude .cache \
+--exclude .var \
+--exclude .rustup \
+--exclude .dotnet \
+--exclude .claude \
+--exclude .icons \
+--exclude .gnupg"
 
 export FZF_DEFAULT_COMMAND="fd --type=f $FD_EXCLUDES"
 export FZF_CTRL_T_COMMAND="$FZF_DEFAULT_COMMAND"
@@ -261,16 +264,17 @@ export FZF_ALT_C_COMMAND="fd --type=d $FD_EXCLUDES"
 
 # Dracula fzf theme
 export FZF_DEFAULT_OPTS="
-    --ansi
-    --height=40%
-    --layout=reverse
-    --border=rounded
-    --prompt='❯ '
-    --pointer='➤ '
-    --marker='✓ '
-    --color=fg:#f8f8f2,bg:#282a36,hl:#bd93f9
-    --color=fg+:#f8f8f2,bg+:#44475a,hl+:#bd93f9
-    --color=info:#ffb86c,prompt:#50fa7b,pointer:#bd93f9,marker:#ff5555,spinner:#ffb86c,header:#8be9fd
+--ansi
+--height=50%
+--layout=reverse
+--cycle
+--border=rounded
+--prompt='❯ '
+--pointer='➤ '
+--marker='✓ '
+--color=fg:#f8f8f2,bg:#282a36,hl:#bd93f9
+--color=fg+:#f8f8f2,bg+:#44475a,hl+:#bd93f9
+--color=info:#ffb86c,prompt:#50fa7b,pointer:#bd93f9,marker:#ff5555,spinner:#ffb86c,header:#8be9fd
 "
 
 fzf() {
