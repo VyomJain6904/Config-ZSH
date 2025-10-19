@@ -164,7 +164,7 @@ PROMPT='[%F{red}󰣇 %c%f] [%F{green}  $(get_ip_address)%f] $(git_branch)➤ 
 alias cls="clear"
 alias cl="clear"
 alias upd="sudo pacman -Syu"
-alias updapp="sudo yay -Syu"
+alias updapp="yay -Syu"
 alias rmf="sudo rm -rf"
 alias remove="sudo pacman -Rns "
 alias cln='sudo pacman -Rns $(pacman -Qdtq) && sudo pacman -Sc --noconfirm'
@@ -174,11 +174,13 @@ alias exir="exit"
 alias mk="mkdir "
 alias nr="sudo systemctl restart NetworkManager"
 alias ff="fastfetch"
-alias his="history | fzf --tac --preview 'echo {1..}' | sed 's/ *[0-9]* *//' | xargs -r zsh -i -c"
+alias his="history | fzf --tac --preview 'echo {} | sed \"s/ *[0-9]* *//\" | bat --language sh --style=plain' | sed 's/ *[0-9]* *//' | xargs -r zsh -i -c"
+alias zsrc="source ~/.zshrc"
+alias btop="btop --force-utf"
 
 # Files
-alias l="eza -la --icons --git --color=always --level=1 --no-time --no-user"
-alias ll="eza -la --icons --git --color=always --level=2 --no-time --no-user"
+alias l="eza -la --icons --git --color=always --level=1 --no-time --no-user --tree"
+alias ll="eza -la --icons --git --color=always --level=2 --no-time --no-user --tree"
 alias cat="bat "
 
 # Dev
@@ -189,6 +191,12 @@ alias gs="git status"
 alias gr="git remote set-url origin "
 alias ga="git add ."
 alias gp="git push -u origin main"
+alias pserver="python3 -m http.server"
+alias doc="sudo docker"
+alias msf="sudo docker run -it --name metasploitable2 \
+-p 80:80 -p 21:21 -p 22:22 -p 445:445 \
+-p 3306:3306 -p 5900:5900 -p 6667:6667 -p 8787:8787 \
+tleemcjr/metasploitable2"
 
 
 # -----------------------------
@@ -317,3 +325,7 @@ _fzf_comprun() {
 # Bat Theme
 # -----------------------------
 export BAT_THEME=Dracula
+
+
+export LANG=en_IN.UTF-8
+export LC_ALL=en_IN.UTF-8

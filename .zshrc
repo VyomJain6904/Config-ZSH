@@ -1,10 +1,18 @@
+# ========================
+# Oh My Zsh & Base Setup
+# ========================
 export ZSH="$HOME/.oh-my-zsh"
-
 ZSH_THEME="apple"
 
+# ----------------
+# Starship & Zoxide
+# ----------------
 eval "$(starship init zsh)"
 eval "$(zoxide init zsh --cmd cd)"
 
+# ----------------
+# Plugins
+# ----------------
 plugins=(
     ssh
     git
@@ -17,38 +25,49 @@ plugins=(
     zsh-interactive-cd
 )
 
-
 source $ZSH/oh-my-zsh.sh
 source ~/.oh-my-zsh/plugins/zsh-defer/zsh-defer.plugin.zsh
 zsh-defer source /usr/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
 zsh-defer source /usr/share/zsh-history-substring-search/zsh-history-substring-search.zsh
 
-
+# ========================
+# Custom Prompt Functions
+# ========================
 get_ip_address() {
-    if [[ -n "$(ifconfig eth0 2>/dev/null)" ]]; then
-        echo "%{$fg[green]%}$(ifconfig eth0 | awk '/inet / {print $2}')%{$reset_color%}"
-        elif [[ -n "$(ifconfig eth0 2>/dev/null)" ]]; then
-        echo "%{$fg[green]%}$(ifconfig eth0 | awk '/inet / {print $2}')%{$reset_color%}"
+    local tun0_ip eth0_ip wlan0_ip
+
+    tun0_ip=$(ip -4 addr show tun0 2>/dev/null | awk '/inet / {print $2}' | cut -d/ -f1)
+    eth0_ip=$(ip -4 addr show eth0 2>/dev/null | awk '/inet / {print $2}' | cut -d/ -f1)
+    wlan0_ip=$(ip -4 addr show wlan0 2>/dev/null | awk '/inet / {print $2}' | cut -d/ -f1)
+
+    if [[ -n "$tun0_ip" ]]; then
+        echo "%F{red}󰖂  %F{red}${tun0_ip}%f"
+    elif [[ -n "$eth0_ip" ]]; then
+        echo "%F{green}󰈀  %F{green}${eth0_ip}%f"
+    elif [[ -n "$wlan0_ip" ]]; then
+        echo "%F{yellow}  %F{yellow}${wlan0_ip}%f"
     else
-        echo "%{$fg[red]%}No IP%{$reset_color%}"
+        echo "%F{white}󰤮  %F{white}No IP%f"
     fi
 }
+
+
 
 git_branch() {
     if git rev-parse --is-inside-work-tree >/dev/null 2>&1; then
         local branch
         branch=$(git symbolic-ref --short HEAD 2>/dev/null || git rev-parse --short HEAD 2>/dev/null)
-        echo "[%{$fg[blue]%}  $branch%{$reset_color%}]"
+        echo "[%{$fg[black]%}  $branch%{$reset_color%}]"
     fi
 }
 
-PROMPT='[%F{red} %c%f] [%F{green} $(get_ip_address)%f] ➤ '
+PROMPT='[%F{red} %c%f] [$(get_ip_address)%f] ➤ '
 
-# ------
-# Alias
-# ------
+# ========================
+# Aliases
+# ========================
 
-# System
+# --- System ---
 alias cls="clear"
 alias cl="clear"
 alias su="su - root"
@@ -63,30 +82,52 @@ alias ins="sudo apt install -y "
 alias remove="sudo apt remove --purge -y "
 alias omz="omz update"
 alias nr="sudo systemctl restart NetworkManager"
+alias zsrc="source ~/.zshrc"
 
-# Files
+# --- Productivity ---
 alias l="eza --color=always --long --git --icons=always --tree --level=1 --no-time --no-user --all"
 alias ll="eza --color=always --long --git --icons=always --tree --level=2 --no-time --no-user --all"
 alias gt="git clone"
 alias msf="msfconsole"
 alias bat="batcat"
 alias thm="cd /home/kali/Downloads && sudo openvpn VyomJain.ovpn"
+alias htb="cd /home/kali/HTB && sudo openvpn htb.ovpn"
+alias lab="cd /home/kali/HTB && sudo openvpn lab.ovpn"
+alias htba="cd /home/kali/HTB && sudo openvpn htb_a.ovpn"
+alias hs="cd /home/kali/HTB && sudo openvpn hs.ovpn"
 alias fd="fdfind"
 alias f="fzf"
-alias ff="fastfetch"
+alias ff="fastfetch --kitty-direct /home/kali/.config/fastfetch/logo.png"
+alias fastfetch="fastfetch --kitty-direct /home/kali/.config/fastfetch/logo.png"
+alias splunk="cd /opt/splunk/bin && sudo ./splunk start"
+alias n="nvim"
+alias nv="sudo nvim"
+alias pserver="cd ~/tools && python3 -m http.server"
+alias bhu="cd /home/kali/tools && sudo ./bloodhound-cli up"
+alias bhd="cd /home/kali/tools && sudo ./bloodhound-cli down"
 
+# Target IP :
+target() {
+    if [[ -z "$1" ]]; then
+        echo "Usage: target <IP or domain>"
+        return 1
+    fi
+    /usr/local/bin/target.sh "$1"
+}
+
+# ========================
+# Completions & NVM
+# ========================
 autoload bashcompinit && bashcompinit
 autoload -Uz compinit && compinit
+
 export NVM_DIR="$HOME/.nvm"
-[ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
-[ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"  # This loads nvm bash_completion
+[ -s "$NVM_DIR/nvm.sh" ] && . "$NVM_DIR/nvm.sh"
+[ -s "$NVM_DIR/bash_completion" ] && . "$NVM_DIR/bash_completion"
 
-# -----------
+# ========================
 # Yazi Setup
-# -----------
-export EDITOR="subl"
-export VISUAL="$EDITOR"
-
+# ========================
 function y() {
     local tmp="$(mktemp -t "yazi-cwd.XXXXXX")" cwd
     yazi "$@" --cwd-file="$tmp"
@@ -96,112 +137,9 @@ function y() {
     rm -- "$tmp"
 }
 
-# ----------------------
-# Github Workflow & fzf
-# ----------------------
-function gt() {
-    # Colors
-    local RED=$'\033[1;31m'
-    local GREEN=$'\033[1;32m'
-    local YELLOW=$'\033[1;33m'
-    local BLUE=$'\033[1;34m'
-    local CYAN=$'\033[1;36m'
-    local MAGENTA=$'\033[1;35m'
-    local RESET=$'\033[0m'
-
-    if ! git rev-parse --is-inside-work-tree >/dev/null 2>&1; then
-        echo -e "  ${RED}  Not in a Git repository!${RESET}"
-        return 1
-    fi
-
-    local exit_requested=false
-
-    while [[ "$exit_requested" == false ]]; do
-        local options=(
-            "${BLUE}  Git Status${RESET}"
-            "${YELLOW}  Git Add${RESET}"
-            "${GREEN}  Git Commit${RESET}"
-            "${MAGENTA}  Git Push${RESET}"
-            "${CYAN}  Recent Commits${RESET}"
-            "${RED}󰩈  Exit${RESET}"
-        )
-
-        local choice=$(printf "%s\n" "${options[@]}" \
-            | command fzf \
-            --ansi \
-            --prompt=" ${CYAN}Git › ${RESET}" \
-            --header="${MAGENTA}Repository: $(basename "$(git rev-parse --show-toplevel 2>/dev/null)")${RESET}" \
-            --border=rounded \
-            --height=40% \
-            --reverse \
-            --cycle \
-        --bind='ctrl-c:abort,esc:abort')
-
-        if [[ $? -ne 0 ]] || [[ -z "$choice" ]]; then
-            echo -e "\n  ${YELLOW}󰩈  Exited.${RESET}"
-            break
-        fi
-
-        case $choice in
-            *"Git Status"*)
-                echo -e "${BLUE}  Repository Status:${RESET}"
-                git status
-            ;;
-            *"Git Add"*)
-                git add .
-                echo -e "  ${GREEN}  Files staged.${RESET}"
-            ;;
-            *"Git Commit"*)
-                if git diff --cached --quiet 2>/dev/null; then
-                    echo -e "  ${YELLOW}  No staged changes.${RESET}"
-                else
-                    echo -ne "${CYAN}  Commit message:${RESET} "
-                    read msg
-                    if [[ -n "$msg" ]]; then
-                        git commit -m "$msg"
-                        echo -e "  ${GREEN}  Commit created.${RESET}"
-                    else
-                        echo -e "  ${RED}  Commit message cannot be empty.${RESET}"
-                    fi
-                fi
-            ;;
-            *"Git Push"*)
-                local current_branch=$(git branch --show-current 2>/dev/null)
-                echo -e "${BLUE}  Pushing branch: ${MAGENTA}${current_branch}${RESET}"
-                if git push 2>/dev/null; then
-                    echo -e "  ${GREEN}  Push successful.${RESET}"
-                else
-                    git push -u origin "$current_branch"
-                    [[ $? -eq 0 ]] && echo -e "  ${GREEN}  Push successful.${RESET}" \
-                    || echo -e "  ${RED}  Push failed.${RESET}"
-                fi
-            ;;
-            *"Recent Commits"*)
-                echo -e "${BLUE}  Last 5 commits (ascending):${RESET}"
-                total=$(git rev-list --count HEAD)
-                start=$((total-4))
-                git log -n 5 --pretty=format:"%s" --reverse \
-                | awk -v start="$start" '{print start++ ". " $0}'
-            ;;
-            *"Exit"*)
-                echo -e "  ${GREEN}󰩈  Exiting Git Workflow.${RESET}"
-                exit_requested=true
-            ;;
-        esac
-
-        if [[ "$exit_requested" == false ]]; then
-            echo ""
-            echo -e "${CYAN}⏎ Press Enter to continue...${RESET}"
-            read
-            clear
-        fi
-    done
-}
-
-# -----------------------------
+# ========================
 # fzf & fdfind Config
-# -----------------------------
-
+# ========================
 FD_EXCLUDES=(
     --strip-cwd-prefix
     --exclude .git
@@ -218,12 +156,11 @@ FD_EXCLUDES=(
     --exclude .gnupg
 )
 
-# Default fzf commands using fdfind
 export FZF_DEFAULT_COMMAND="fdfind --type f ${FD_EXCLUDES[*]}"
 export FZF_CTRL_T_COMMAND="$FZF_DEFAULT_COMMAND"
 export FZF_ALT_C_COMMAND="fdfind --type d ${FD_EXCLUDES[*]}"
 
-# Dracula theme
+# Dracula Theme
 export FZF_DEFAULT_OPTS="--ansi \
 --height=50% \
 --layout=reverse \
@@ -236,7 +173,7 @@ export FZF_DEFAULT_OPTS="--ansi \
 --color=fg+:#f8f8f2,bg+:#44475a,hl+:#bd93f9 \
 --color=info:#ffb86c,prompt:#50fa7b,pointer:#bd93f9,marker:#ff5555,spinner:#ffb86c,header:#8be9fd"
 
-# Custom wrapper for fzf (-l flag = include hidden files)
+# Custom fzf wrapper
 fzf() {
     local show_hidden=false
     local args=()
@@ -254,16 +191,13 @@ fzf() {
     fi
 }
 
-# Completion (use fdfind instead of fd)
 _fzf_compgen_path() { fdfind --exclude .git . "$1"; }
 _fzf_compgen_dir()  { fdfind --type d --exclude .git . "$1"; }
 
-# Preview config
 show_file_or_dir_preview='if [ -d {} ]; then eza --tree --color=always {} | head -200; else bat -n --color=always --line-range :500 {}; fi'
 export FZF_CTRL_T_OPTS="--preview \"$show_file_or_dir_preview\""
 export FZF_ALT_C_OPTS="--preview \"eza --tree --color=always {} | head -200\""
 
-# Custom preview for completions
 _fzf_comprun() {
     local command=$1; shift
     case "$command" in
@@ -274,12 +208,31 @@ _fzf_comprun() {
     esac
 }
 
-
-# ----------
-# Bat Theme
-# ----------
+# ========================
+# Themes and Paths
+# ========================
 export BAT_THEME=Dracula
 
-
+# Homebrew setup
 test -d ~/.linuxbrew && eval "$(~/.linuxbrew/bin/brew shellenv)"
 test -d /home/linuxbrew/.linuxbrew && eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"
+
+# Language Servers & Tools
+export PATH="/home/kali/tools/lua-language-server/bin:$PATH"
+export PATH="/opt/nvim-linux-x86_64/bin:$PATH"
+
+# Go Setup
+export PATH="/usr/local/go/bin:$PATH"
+export GOPATH="$HOME/go"
+export PATH="$PATH:$GOPATH/bin"
+
+# Editor
+export EDITOR="nvim"
+export VISUAL="nvim"
+
+# Cursor Fix
+echo -ne "\e[5 q"
+
+# Kitty
+export PATH="$HOME/.local/kitty.app/bin:$PATH"
+bindkey '^H' backward-kill-word

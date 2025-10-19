@@ -29,13 +29,17 @@ git clone https://github.com/mrjohannchang/zsh-interactive-cd ~/.oh-my-zsh/plugi
 ```
 
 ### Install the following Plugins :
+
 ```sh
 sudo apt install fzf eza fd yazi jq zoxide fastfetch batcat tldr ripgrep poppler -y # For Ubuntu / Debain Based
 ```
-or 
+
+or
+
 ```sh
-sudo pacman -Sy fzf eza fd yazi jq zoxide fastfetch bat tldr ripgrep poppler # For Arch Based 
+sudo pacman -Sy fzf eza fd yazi jq zoxide fastfetch bat tldr ripgrep poppler # For Arch Based
 ```
+
 ---
 
 ### 3️⃣ Nerdfont Download
@@ -47,59 +51,43 @@ wget https://github.com/ryanoasis/nerd-fonts/releases/download/v3.4.0/JetBrainsM
 unzip JetBrainsMono.zip
 fc-cache -fv
 ```
----
-
-### Update `.zshrc` Configuration
-
-After installing the plugins, open your **.zshrc** file and copy the code in your **.zshrc** file.
 
 ---
 
-# For Devops Setup
+## PAPT (Modern APT Wrapper)
 
-### Installation of Go-Lang
+`papt` is a modern wrapper around `apt` that enhances user experience with cleaner commands, colorful outputs, and improved usability.
 
-```sh
-https://go.dev/dl/
+### 1. Download / Copy the `papt` Script
+
+### 2. Move it to `/usr/local/bin`
+
+```bash
+sudo mv papt /usr/local/bin/papt
 ```
 
----
+3. Make it Executable
 
-### Installation of Rust
-
-```sh
-curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh
+```bash
+sudo chmod +x /usr/local/bin/papt
 ```
 
----
+#### Optional – Replace apt with papt
 
-### Installation of Node JS
+To make papt your default APT handler, add this alias to your shell config.
 
-```sh
-curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.40.3/install.sh | bash
-\. "$HOME/.nvm/nvm.sh"
-nvm install 24
-node -v
-nvm current
-npm -v
+For Zsh (.zshrc)
+
+```bash
+echo "alias apt='papt'" >> ~/.zshrc
+source ~/.zshrc
 ```
 
----
+For Bash (.bashrc)
 
-### Installation of Docker
-
-```sh
-sudo apt-get update
-sudo apt-get install ca-certificates curl
-sudo install -m 0755 -d /etc/apt/keyrings
-sudo curl -fsSL https://download.docker.com/linux/debian/gpg -o /etc/apt/keyrings/docker.asc
-sudo chmod a+r /etc/apt/keyrings/docker.asc
-echo \
-  "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/docker.asc] https://download.docker.com/linux/debian \
-  $(. /etc/os-release && echo "$VERSION_CODENAME") stable" | \
-  sudo tee /etc/apt/sources.list.d/docker.list > /dev/null
-sudo apt-get update
-sudo apt-get install docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin
+```bash
+echo "alias apt='papt'" >> ~/.bashrc
+source ~/.bashrc
 ```
 
 ---
