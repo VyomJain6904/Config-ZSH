@@ -8,7 +8,7 @@ BLUE="\e[34m"
 MAGENTA="\e[35m"
 RESET="\e[0m"
 
-PACMAN_FRAMES=("á—§ ")
+PACMAN_FRAMES=("ᗧ ")
 
 BAR_WIDTH=50
 
@@ -23,38 +23,42 @@ cleanup() {
 trap cleanup EXIT INT TERM
 
 show_help() {
-  printf "${GREEN}papt${RESET} - APT Wrapper\n\n"
-  printf "${YELLOW}Usage:${RESET} sudo papt [options] command\n\n"
-  printf "${CYAN}Most used commands :${RESET}\n"
-  printf "  ${GREEN}list${RESET}         - list packages based on package names\n"
-  printf "  ${GREEN}search${RESET}       - search in package descriptions (with fzf if available)\n"
-  printf "  ${GREEN}show${RESET}         - show package details\n"
-  printf "  ${GREEN}install${RESET}      - install packages\n"
-  printf "  ${GREEN}reinstall${RESET}    - reinstall packages\n"
-  printf "  ${GREEN}remove${RESET}       - remove packages\n"
-  printf "  ${GREEN}autoremove${RESET}   - automatically remove all unused packages\n"
-  printf "  ${GREEN}update${RESET}       - update list of available packages\n"
-  printf "  ${GREEN}upgrade${RESET}      - upgrade the system by installing/upgrading packages\n"
-  printf "  ${GREEN}full-upgrade${RESET} - upgrade the system by removing/installing/upgrading packages\n"
-  printf "  ${GREEN}dist-upgrade${RESET} - alias for full-upgrade\n"
-  printf "  ${GREEN}purge${RESET}        - remove packages and their configuration files\n\n"
-  printf "${CYAN}Interactive commands :${RESET}\n"
-  printf "  ${GREEN}finstall${RESET}  - search and install packages interactively\n"
-  printf "  ${GREEN}fremove${RESET}   - search and remove packages interactively\n"
-  printf "  ${GREEN}fshow${RESET}     - search and show package details interactively\n\n"
-  printf "${CYAN}Additional commands :${RESET}\n"
-  printf "  ${GREEN}edit-sources${RESET} - edit the source information file\n"
-  printf "  ${GREEN}satisfy${RESET}      - satisfy dependency strings\n\n"
-  printf "${YELLOW}Options :${RESET}\n"
-  printf "  ${GREEN}-h, --help${RESET}   - show this help message\n"
-  printf "  ${GREEN}-v, --version${RESET} - show version information\n"
+    printf "${GREEN}papt${RESET} - APT Wrapper (Made by VyomJain)\n\n"
+    printf "${YELLOW}Usage:${RESET} sudo papt [options] command\n\n"
+    printf "${CYAN}Most used commands :${RESET}\n"
+    printf "    ${GREEN}list${RESET}         - list packages based on package names\n"
+    printf "    ${GREEN}search${RESET}       - search in package descriptions (with fzf if available)\n"
+    printf "    ${GREEN}show${RESET}         - show package details\n"
+    printf "    ${GREEN}install${RESET}      - install packages\n"
+    printf "    ${GREEN}reinstall${RESET}    - reinstall packages\n"
+    printf "    ${GREEN}remove${RESET}       - remove packages\n"
+    printf "    ${GREEN}autoremove${RESET}   - automatically remove all unused packages\n"
+    printf "    ${GREEN}update${RESET}       - update list of available packages\n"
+    printf "    ${GREEN}upgrade${RESET}      - upgrade the system by installing/upgrading packages\n"
+    printf "    ${GREEN}full-upgrade${RESET} - upgrade the system by removing/installing/upgrading packages\n"
+    printf "    ${GREEN}dist-upgrade${RESET} - alias for full-upgrade\n"
+    printf "    ${GREEN}purge${RESET}        - remove packages and their configuration files\n\n"
+    printf "${CYAN}Interactive commands :${RESET}\n"
+    printf "    ${GREEN}finstall${RESET}  - search and install packages interactively\n"
+    printf "    ${GREEN}fremove${RESET}   - search and remove packages interactively\n"
+    printf "    ${GREEN}fshow${RESET}     - search and show package details interactively\n\n"
+    printf "${CYAN}Additional commands :${RESET}\n"
+    printf "    ${GREEN}edit-sources${RESET} - edit the source information file\n"
+    printf "    ${GREEN}satisfy${RESET}      - satisfy dependency strings\n\n"
+    printf "${YELLOW}Options :${RESET}\n"
+    printf "    ${GREEN}-h, --help${RESET}   - show this help message\n"
+    printf "    ${GREEN}-v, --version${RESET} - show version information\n\n"
+    printf "${YELLOW}Multi-Select Tips :${RESET}\n"
+    printf "    ${GREEN}Tab${RESET}          - select/deselect multiple packages\n"
+    printf "    ${GREEN}Shift+Tab${RESET}    - deselect packages\n"
+    printf "    ${GREEN}Enter${RESET}        - confirm selection\n"
 }
 
 show_version() {
-  printf "%bpapt%b version 1.0.0\n" "$GREEN" "$RESET"
-  printf "APT Wrapper - A Modern APT package manager\n"
-  printf "\nBased on APT:\n"
-  apt --version
+    printf "%bpapt%b version 1.0.0\n" "$GREEN" "$RESET"
+    printf "APT Wrapper - A Modern APT package manager (Made by VyomJain)\n"
+    printf "\nBased on APT:\n"
+    apt --version
 }
 
 get_color_for_command() {
@@ -81,7 +85,7 @@ get_color_for_command() {
 needs_progress_bar() {
   local cmd="$1"
   case "$cmd" in
-    install|reinstall|remove|purge|autoremove|update|upgrade|dist-upgrade|full-upgrade)
+    install|reinstall|remove|purge|autoremove|update|upgrade|dist-upgrade|full-upgrade|autoclean)
       return 0
       ;;
     *)
@@ -132,7 +136,7 @@ draw_completed_bar() {
     printf "-"
   done
 
-  printf "á—§ ] 100%%%b" "$RESET"
+  printf "ᗧ ] 100%%%b" "$RESET"
   printf "\n"
 }
 
@@ -165,7 +169,7 @@ fzf_search_packages() {
   local action="$1"
 
   if ! command -v fzf &> /dev/null; then
-    printf "%bfzf is not installed. Install it first: sudo apt install fzf%b\n" "$RED" "$RESET"
+    printf "%bfzf is not installed. Install it first: sudo papt install fzf%b\n" "$RED" "$RESET"
     exit 1
   fi
 
@@ -173,32 +177,42 @@ fzf_search_packages() {
     install)
       local selected=$(apt-cache search . | \
         awk '{print $1}' | \
-        command fzf --prompt='ðŸ“¦ Install â¯ ' \
-            --header='â†µ Install | ESC Cancel | Type to search' \
+        command fzf --multi \
+            --prompt='📦 Install ❯ ' \
+            --header='Tab: Select | ↵ Install | ESC Cancel' \
             --preview='apt-cache show {} 2>/dev/null | batcat --style=numbers --color=always -l yaml || apt-cache show {} 2>/dev/null' \
             --preview-window='right:65%:wrap' \
-            --color='prompt:#50fa7b,pointer:#50fa7b,marker:#50fa7b')
+            --cycle \
+            --border='rounded' \
+            --pointer='➤ ' \
+            --marker='✓ ' \
+            --color='fg:#f8f8f2,bg:#282a36,hl:#bd93f9' \
+            --color='fg+:#f8f8f2,bg+:#44475a,hl+:#bd93f9' \
+            --color='info:#ffb86c,prompt:#50fa7b,pointer:#bd93f9,marker:#ff5555,spinner:#ffb86c,header:#8be9fd')
 
       if [[ -n "$selected" ]]; then
-        printf "\n%bInstalling: %s%b\n" "$GREEN" "$selected" "$RESET"
-        PACKAGE_NAME="$selected"
+        local pkg_array=($selected)
+        local pkg_count=${#pkg_array[@]}
+
+        printf "\n%bInstalling %d package(s): %s%b\n" "$GREEN" "$pkg_count" "$selected" "$RESET"
+
         APT_COMMAND="install"
         BAR_COLOR="$GREEN"
 
-        apt -y install "$selected" > "$LOG_FILE" 2> "$ERR_FILE" &
+        apt -y install $selected > "$LOG_FILE" 2> "$ERR_FILE" &
         apt_pid=$!
         animate_progress "$apt_pid" "$BAR_COLOR"
         wait "$apt_pid"
         status=$?
 
         if [[ $status -eq 0 ]]; then
-          printf "%bðŸ“¦ Package '%s' installed successfully%b\n" "$GREEN" "$selected" "$RESET"
+          printf "%b📦 %d package(s) installed successfully%b\n" "$GREEN" "$pkg_count" "$RESET"
         else
-          printf "%bðŸ“¦ Failed to install '%s'%b\n" "$RED" "$selected" "$RESET"
+          printf "%b📦 Failed to install some packages%b\n" "$RED" "$RESET"
         fi
         exit $status
       else
-        printf "%bðŸ“¦ No package selected%b\n" "$YELLOW" "$RESET"
+        printf "%b📦 No package selected%b\n" "$YELLOW" "$RESET"
         exit 0
       fi
       ;;
@@ -206,32 +220,42 @@ fzf_search_packages() {
     remove)
       local selected=$(dpkg -l | \
         awk '/^ii/ {print $2}' | \
-        command fzf --prompt='ðŸ“¦ Remove â¯ ' \
-            --header='â†µ Remove | ESC Cancel | Type to search' \
+        command fzf --multi \
+            --prompt='📦 Remove ❯ ' \
+            --header='Tab: Select | ↵ Remove | ESC Cancel' \
             --preview='apt-cache show {} 2>/dev/null | batcat --style=numbers --color=always -l yaml || apt-cache show {} 2>/dev/null' \
             --preview-window='right:65%:wrap' \
-            --color='prompt:#ff5555,pointer:#ff5555,marker:#ff5555,bg+:red,hl+:white,info:cyan')
+            --cycle \
+            --border='rounded' \
+            --pointer='➤ ' \
+            --marker='✓ ' \
+            --color='fg:#f8f8f2,bg:#282a36,hl:#bd93f9' \
+            --color='fg+:#f8f8f2,bg+:#44475a,hl+:#bd93f9' \
+            --color='info:#ffb86c,prompt:#50fa7b,pointer:#bd93f9,marker:#ff5555,spinner:#ffb86c,header:#8be9fd')
 
       if [[ -n "$selected" ]]; then
-        printf "\n%bRemoving: %s%b\n" "$RED" "$selected" "$RESET"
-        PACKAGE_NAME="$selected"
+        local pkg_array=($selected)
+        local pkg_count=${#pkg_array[@]}
+
+        printf "\n%bRemoving %d package(s): %s%b\n" "$RED" "$pkg_count" "$selected" "$RESET"
+
         APT_COMMAND="remove"
         BAR_COLOR="$RED"
 
-        apt -y remove "$selected" > "$LOG_FILE" 2> "$ERR_FILE" &
+        apt -y remove $selected > "$LOG_FILE" 2> "$ERR_FILE" &
         apt_pid=$!
         animate_progress "$apt_pid" "$BAR_COLOR"
         wait "$apt_pid"
         status=$?
 
         if [[ $status -eq 0 ]]; then
-          printf "%bðŸ“¦ Package '%s' removed successfully%b\n" "$GREEN" "$selected" "$RESET"
+          printf "%b📦 %d package(s) removed successfully%b\n" "$GREEN" "$pkg_count" "$RESET"
         else
-          printf "%bðŸ“¦ Failed to remove '%s'%b\n" "$RED" "$selected" "$RESET"
+          printf "%b📦 Failed to remove some packages%b\n" "$RED" "$RESET"
         fi
         exit $status
       else
-        printf "%bðŸ“¦ No package selected%b\n" "$YELLOW" "$RESET"
+        printf "%b📦 No package selected%b\n" "$YELLOW" "$RESET"
         exit 0
       fi
       ;;
@@ -239,18 +263,24 @@ fzf_search_packages() {
     show)
       local selected=$(apt-cache search . | \
         awk '{print $1}' | \
-        command fzf --prompt='ðŸ“¦ View â¯ ' \
-            --header='â†µ View Details | ESC Cancel | Type to search' \
+        command fzf --prompt='📦 View ❯ ' \
+            --header='↵ View Details | ESC Cancel' \
             --preview='apt-cache show {} 2>/dev/null | batcat --style=numbers --color=always -l yaml || apt-cache show {} 2>/dev/null' \
             --preview-window='right:65%:wrap' \
-            --color='prompt:#8be9fd,pointer:#8be9fd,marker:#8be9fd')
+            --cycle \
+            --border='rounded' \
+            --pointer='➤ ' \
+            --marker='✓ ' \
+            --color='fg:#f8f8f2,bg:#282a36,hl:#bd93f9' \
+            --color='fg+:#f8f8f2,bg+:#44475a,hl+:#bd93f9' \
+            --color='info:#ffb86c,prompt:#50fa7b,pointer:#bd93f9,marker:#ff5555,spinner:#ffb86c,header:#8be9fd')
 
       if [[ -n "$selected" ]]; then
         printf "\n%bPackage Details:%b\n" "$CYAN" "$RESET"
         apt-cache show "$selected"
         exit 0
       else
-        printf "%bâœ— No package selected%b\n" "$YELLOW" "$RESET"
+        printf "%bX No package selected%b\n" "$YELLOW" "$RESET"
         exit 0
       fi
       ;;
@@ -264,13 +294,13 @@ check_package_status() {
   case "$cmd" in
     install|reinstall)
       if [[ "$cmd" == "install" ]] && dpkg -l "$pkg" 2>/dev/null | grep -q "^ii"; then
-        printf "%bâš  Package '%s' is already installed%b\n" "$YELLOW" "$pkg" "$RESET"
+        printf "%b📦 Package '%s' is already installed%b\n" "$YELLOW" "$pkg" "$RESET"
         return 1
       fi
       ;;
     remove|purge)
       if ! dpkg -l "$pkg" 2>/dev/null | grep -q "^ii"; then
-        printf "%bâš  Package '%s' is not installed%b\n" "$YELLOW" "$pkg" "$RESET"
+        printf "%b📦 Package '%s' is not installed%b\n" "$YELLOW" "$pkg" "$RESET"
         return 1
       fi
       ;;
@@ -331,34 +361,47 @@ case "$APT_COMMAND" in
     if command -v fzf &> /dev/null && [[ $# -eq 1 ]]; then
       printf "%bSelect list option:%b\n" "$CYAN" "$RESET"
       choice=$(printf "All packages\nInstalled packages\nUpgradable packages\nManual packages" | \
-        command fzf --prompt='ðŸ“¦ List â¯ ' \
-            --header='â†µ Select | ESC Cancel' \
-            --color='prompt:#50fa7b,pointer:#50fa7b,marker:#50fa7b')
+        command fzf --prompt='📦 List ❯ ' \
+            --header='↵ Select | ESC Cancel' \
+            --cycle \
+            --border='rounded' \
+            --pointer='➤ ' \
+            --marker='✓ ' \
+            --color='fg:#f8f8f2,bg:#282a36,hl:#bd93f9' \
+            --color='fg+:#f8f8f2,bg+:#44475a,hl+:#bd93f9' \
+            --color='info:#ffb86c,prompt:#50fa7b,pointer:#bd93f9,marker:#ff5555,spinner:#ffb86c,header:#8be9fd')
 
       case "$choice" in
         "All packages")
-          apt list 2>/dev/null | command fzf --prompt='ðŸ“¦ All Packages â¯ ' \
-              --preview='apt-cache show {1} 2>/dev/null | batcat --style=numbers --color=always -l yaml || apt-cache show {1} 2>/dev/null' \
-              --preview-window='right:65%:wrap'
-          ;;
-        "Installed packages")
-          apt list --installed 2>/dev/null | command fzf --prompt='ðŸ“¦ Installed â¯ ' \
-              --preview='apt-cache show {1} 2>/dev/null | batcat --style=numbers --color=always -l yaml || apt-cache show {1} 2>/dev/null' \
-              --preview-window='right:65%:wrap'
-          ;;
-        "Upgradable packages")
-          apt list --upgradable 2>/dev/null | command fzf --prompt='ðŸ“¦ Upgradable â¯ ' \
+          apt list 2>/dev/null | command fzf --prompt='📦 All Packages ❯ ' \
               --preview='apt-cache show {1} 2>/dev/null | batcat --style=numbers --color=always -l yaml || apt-cache show {1} 2>/dev/null' \
               --preview-window='right:65%:wrap' \
-              --color='prompt:#ffb86c,pointer:#ffb86c,marker:#ffb86c'
+              --cycle
+          ;;
+        "Installed packages")
+          apt list --installed 2>/dev/null | command fzf --prompt='📦 Installed ❯ ' \
+              --preview='apt-cache show {1} 2>/dev/null | batcat --style=numbers --color=always -l yaml || apt-cache show {1} 2>/dev/null' \
+              --preview-window='right:65%:wrap' \
+              --cycle
+          ;;
+        "Upgradable packages")
+          apt list --upgradable 2>/dev/null | command fzf --multi \
+              --prompt='📦 Upgradable ❯ ' \
+              --header='Tab: Select | ↵ Upgrade Selected | ESC Cancel' \
+              --preview='apt-cache show {1} 2>/dev/null | batcat --style=numbers --color=always -l yaml || apt-cache show {1} 2>/dev/null' \
+              --preview-window='right:65%:wrap' \
+              --color='prompt:#ffb86c,pointer:#ffb86c,marker:#ffb86c' \
+              --cycle | awk -F'/' '{print $1}' | xargs -r sudo apt install -y
+          exit $?
           ;;
         "Manual packages")
-          apt list --manual-installed 2>/dev/null | command fzf --prompt='ðŸ“¦ Manual â¯ ' \
+          apt list --manual-installed 2>/dev/null | command fzf --prompt='📦 Manual ❯ ' \
               --preview='apt-cache show {1} 2>/dev/null | batcat --style=numbers --color=always -l yaml || apt-cache show {1} 2>/dev/null' \
-              --preview-window='right:65%:wrap'
+              --preview-window='right:65%:wrap' \
+              --cycle
           ;;
         *)
-          printf "%bâœ— No option selected%b\n" "$YELLOW" "$RESET"
+          printf "%bX No option selected%b\n" "$YELLOW" "$RESET"
           ;;
       esac
       exit $?
@@ -402,37 +445,37 @@ wait "$apt_pid"
 status=$?
 
 if [[ $status -eq 0 ]]; then
-  printf "%bâœ“ Done!%b\n" "$GREEN" "$RESET"
+  printf "%b✓ Done!%b\n" "$GREEN" "$RESET"
 
   case "$APT_COMMAND" in
     update)
       upgradable=$(apt list --upgradable 2>/dev/null | grep -v "Listing" | wc -l)
       if [[ $upgradable -gt 0 ]]; then
-        printf "%bðŸ“¦ %d package(s) can be upgraded%b\n" "$CYAN" "$upgradable" "$RESET"
+        printf "%b📦 %d package(s) can be upgraded%b\n" "$CYAN" "$upgradable" "$RESET"
         printf "%bRun 'sudo papt upgrade' to upgrade them%b\n" "$CYAN" "$RESET"
       else
-        printf "%bðŸ“¦ All packages are up to date%b\n" "$GREEN" "$RESET"
+        printf "%b📦 All packages are up to date%b\n" "$GREEN" "$RESET"
       fi
       ;;
     upgrade|dist-upgrade|full-upgrade)
-      printf "%bðŸ“¦ System upgraded successfully%b\n" "$GREEN" "$RESET"
+      printf "%b📦 System upgraded successfully%b\n" "$GREEN" "$RESET"
       ;;
     install|reinstall)
       if [[ -n "$PACKAGE_NAME" ]]; then
-        printf "%bðŸ“¦ Package '%s' installed successfully%b\n" "$GREEN" "$PACKAGE_NAME" "$RESET"
+        printf "%b📦 Package '%s' installed successfully%b\n" "$GREEN" "$PACKAGE_NAME" "$RESET"
       fi
       ;;
     remove|purge)
       if [[ -n "$PACKAGE_NAME" ]]; then
-        printf "%bðŸ“¦ Package '%s' removed successfully%b\n" "$GREEN" "$PACKAGE_NAME" "$RESET"
+        printf "%b📦 Package '%s' removed successfully%b\n" "$GREEN" "$PACKAGE_NAME" "$RESET"
       fi
       ;;
     autoremove)
-      printf "%bðŸ“¦ Unused packages removed successfully%b\n" "$GREEN" "$RESET"
+      printf "%b📦 Unused packages removed successfully%b\n" "$GREEN" "$RESET"
       ;;
   esac
 else
-  printf "%bâœ— Failed!%b\n" "$RED" "$RESET"
+  printf "%bX Failed!%b\n" "$RED" "$RESET"
 fi
 
 exit $status
