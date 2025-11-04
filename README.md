@@ -80,19 +80,6 @@ burpsuitepro
 
 ---
 
-### Installation of FindIt
-
-```sh
-https://github.com/VyomJain6904/FindIt
-cd FindIt
-chmod +x findit.py
-pip install -r requirements.txt --break-system-packages
-sudo mv findIt.py /usr/local/bin/findIt.py
-findIt.py -h
-```
-
----
-
 ### Save the file and apply changes by running:
 
 ```sh
