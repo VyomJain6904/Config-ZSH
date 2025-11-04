@@ -199,9 +199,9 @@ alias gp="git push -u origin main"
 alias pserver="python3 -m http.server"
 alias doc="sudo docker"
 alias msf="sudo docker run -it --name metasploitable2 \
-  -p 80:80 -p 21:21 -p 22:22 -p 445:445 \
-  -p 3306:3306 -p 5900:5900 -p 6667:6667 -p 8787:8787 \
-  tleemcjr/metasploitable2"
+-p 80:80 -p 21:21 -p 22:22 -p 445:445 \
+-p 3306:3306 -p 5900:5900 -p 6667:6667 -p 8787:8787 \
+tleemcjr/metasploitable2"
 
 
 # -----------------------------
@@ -324,7 +324,6 @@ _fzf_comprun() {
         *)            fzf --preview "$show_file_or_dir_preview" "$@" ;;
     esac
 }
-
 
 # -----------------------------
 # Bat Theme
