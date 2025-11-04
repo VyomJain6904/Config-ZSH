@@ -163,25 +163,30 @@ PROMPT='[%F{red}󰣇 %c%f] [%F{green}  $(get_ip_address)%f] $(git_branch)➤ 
 # System
 alias cls="clear"
 alias cl="clear"
-alias upd="sudo pacman -Syu"
-alias updapp="yay -Syu"
+alias upd="sudo pacman -Syu --noconfirm"
+alias updapp="yay -Syu --noconfirm"
 alias rmf="sudo rm -rf"
-alias remove="sudo pacman -Rns "
+alias remove="sudo pacman -Rns"
 alias cln='sudo pacman -Rns $(pacman -Qdtq) && sudo pacman -Sc --noconfirm'
-alias ins="sudo pacman -S "
+alias ins="sudo pacman -S"
 alias omz="omz update"
 alias exir="exit"
-alias mk="mkdir "
+alias mk="mkdir"
 alias nr="sudo systemctl restart NetworkManager"
 alias ff="fastfetch"
 alias his="history | fzf --tac --preview 'echo {} | sed \"s/ *[0-9]* *//\" | bat --language sh --style=plain' | sed 's/ *[0-9]* *//' | xargs -r zsh -i -c"
 alias zsrc="source ~/.zshrc"
 alias btop="btop --force-utf"
+alias z="zoxide"
 
 # Files
 alias l="eza -la --icons --git --color=always --level=1 --no-time --no-user --tree"
 alias ll="eza -la --icons --git --color=always --level=2 --no-time --no-user --tree"
-alias cat="bat "
+alias lll="eza -la --icons --git --color=always --level=3 --no-time --no-user --tree"
+alias cat="bat"
+alias f="spf"
+alias s="spf"
+alias cargoi="cargo-seek"
 
 # Dev
 alias start="npm run dev"
@@ -194,9 +199,9 @@ alias gp="git push -u origin main"
 alias pserver="python3 -m http.server"
 alias doc="sudo docker"
 alias msf="sudo docker run -it --name metasploitable2 \
--p 80:80 -p 21:21 -p 22:22 -p 445:445 \
--p 3306:3306 -p 5900:5900 -p 6667:6667 -p 8787:8787 \
-tleemcjr/metasploitable2"
+  -p 80:80 -p 21:21 -p 22:22 -p 445:445 \
+  -p 3306:3306 -p 5900:5900 -p 6667:6667 -p 8787:8787 \
+  tleemcjr/metasploitable2"
 
 
 # -----------------------------
@@ -326,6 +331,9 @@ _fzf_comprun() {
 # -----------------------------
 export BAT_THEME=Dracula
 
-
 export LANG=en_IN.UTF-8
 export LC_ALL=en_IN.UTF-8
+
+export PATH=$PATH:/home/jain/.spicetify
+export PATH="$PATH:$HOME/.spicetify"
+export PATH="$HOME/.cargo/bin:$PATH"
