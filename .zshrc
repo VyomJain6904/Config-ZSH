@@ -41,13 +41,13 @@ get_ip_address() {
     wlan0_ip=$(ip -4 addr show wlan0 2>/dev/null | awk '/inet / {print $2}' | cut -d/ -f1)
 
     if [[ -n "$tun0_ip" ]]; then
-        echo "%F{red}󰖂  %F{red}${tun0_ip}%f"
+        echo "%F{red}󰖂 %F{red}${tun0_ip}%f"
     elif [[ -n "$eth0_ip" ]]; then
-        echo "%F{green}󰈀  %F{green}${eth0_ip}%f"
+        echo "%F{green}󰈀 %F{green}${eth0_ip}%f"
     elif [[ -n "$wlan0_ip" ]]; then
-        echo "%F{yellow}  %F{yellow}${wlan0_ip}%f"
+        echo "%F{yellow} %F{yellow}${wlan0_ip}%f"
     else
-        echo "%F{white}󰤮  %F{white}No IP%f"
+        echo "%F{white}󰤮 %F{white}No IP%f"
     fi
 }
 
@@ -70,6 +70,7 @@ PROMPT='[%F{red} %c%f] [$(get_ip_address)%f] ➤ '
 # --- System ---
 alias cls="clear"
 alias cl="clear"
+alias lc="clear"
 alias su="su - root"
 alias upd="sudo apt update && sudo apt upgrade -y && sudo apt full-upgrade -y"
 alias updk="sudo apt install linux-headers-$(uname -r)"
@@ -82,29 +83,27 @@ alias ins="sudo apt install -y "
 alias remove="sudo apt remove --purge -y "
 alias omz="omz update"
 alias nr="sudo systemctl restart NetworkManager"
-alias zsrc="source ~/.zshrc"
+alias z="source ~/.zshrc"
 
 # --- Productivity ---
-alias l="eza --color=always --long --git --icons=always --tree --level=1 --no-time --no-user --all"
-alias ll="eza --color=always --long --git --icons=always --tree --level=2 --no-time --no-user --all"
+alias l="eza --color=always -la --git --icons=always --tree --level=1 --no-time --no-user"
+alias ll="eza --color=always -la --git --icons=always --tree --level=2 --no-time --no-user"
+alias lll="eza --color=always -la --git --icons=always --tree --level=3 --no-time --no-user"
 alias gt="git clone"
 alias msf="msfconsole"
 alias bat="batcat"
-alias thm="cd /home/kali/Downloads && sudo openvpn VyomJain.ovpn"
-alias htb="cd /home/kali/HTB && sudo openvpn htb.ovpn"
-alias lab="cd /home/kali/HTB && sudo openvpn lab.ovpn"
-alias htba="cd /home/kali/HTB && sudo openvpn htb_a.ovpn"
-alias hs="cd /home/kali/HTB && sudo openvpn hs.ovpn"
+alias thm="cd /home/kali/HTB/vpn/ && sudo openvpn thm.ovpn"
+alias htb="cd /home/kali/HTB/vpn/ && sudo openvpn htb_labs.ovpn"
+alias hs="cd /home/kali/HTB/vpn/ && sudo openvpn hs_lab.ovpn"
 alias fd="fdfind"
 alias f="fzf"
-alias ff="fastfetch --kitty-direct /home/kali/.config/fastfetch/logo.png"
-alias fastfetch="fastfetch --kitty-direct /home/kali/.config/fastfetch/logo.png"
+alias ff="fastfetch"
 alias splunk="cd /opt/splunk/bin && sudo ./splunk start"
-alias n="nvim"
-alias nv="sudo nvim"
-alias pserver="cd ~/tools && python3 -m http.server"
+alias pserver="cd ~/tools/ && python3 -m http.server"
 alias bhu="cd /home/kali/tools && sudo ./bloodhound-cli up"
 alias bhd="cd /home/kali/tools && sudo ./bloodhound-cli down"
+alias s="spf"
+alias run="go run"
 
 # Target IP :
 target() {
@@ -131,7 +130,7 @@ export NVM_DIR="$HOME/.nvm"
 function y() {
     local tmp="$(mktemp -t "yazi-cwd.XXXXXX")" cwd
     yazi "$@" --cwd-file="$tmp"
-    if cwd="$(command cat -- "$tmp")" && [ -n "$cwd" ] && [ "$cwd" != "$PWD" ]; then
+    if cwd="$(command batcat -- "$tmp")" && [ -n "$cwd" ] && [ "$cwd" != "$PWD" ]; then
         builtin cd -- "$cwd"
     fi
     rm -- "$tmp"
@@ -233,6 +232,4 @@ export VISUAL="nvim"
 # Cursor Fix
 echo -ne "\e[5 q"
 
-# Kitty
-export PATH="$HOME/.local/kitty.app/bin:$PATH"
-bindkey '^H' backward-kill-word
+export PATH="$HOME/.cargo/bin:$PATH"

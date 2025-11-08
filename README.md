@@ -68,16 +68,6 @@ curl -O https://blackarch.org/strap.sh
 chmod +x strap.sh
 sudo ./strap.sh
 ```
-
----
-
-### Installation of Burpsuite Pro
-
-```sh
-wget -qO- https://raw.githubusercontent.com/xiv3r/Burpsuite-Professional/main/install.sh | sudo bash
-burpsuitepro
-```
-
 ---
 
 ### Save the file and apply changes by running:

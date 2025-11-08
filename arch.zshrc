@@ -199,9 +199,9 @@ alias gp="git push -u origin main"
 alias pserver="python3 -m http.server"
 alias doc="sudo docker"
 alias msf="sudo docker run -it --name metasploitable2 \
--p 80:80 -p 21:21 -p 22:22 -p 445:445 \
--p 3306:3306 -p 5900:5900 -p 6667:6667 -p 8787:8787 \
-tleemcjr/metasploitable2"
+  -p 80:80 -p 21:21 -p 22:22 -p 445:445 \
+  -p 3306:3306 -p 5900:5900 -p 6667:6667 -p 8787:8787 \
+  tleemcjr/metasploitable2"
 
 
 # -----------------------------
@@ -247,7 +247,7 @@ export VISUAL="$EDITOR"
 function y() {
     local tmp="$(mktemp -t "yazi-cwd.XXXXXX")" cwd
     yazi "$@" --cwd-file="$tmp"
-    if cwd="$(command cat -- "$tmp")" && [ -n "$cwd" ] && [ "$cwd" != "$PWD" ]; then
+    if cwd="$(command batcat -- "$tmp")" && [ -n "$cwd" ] && [ "$cwd" != "$PWD" ]; then
         builtin cd -- "$cwd"
     fi
     rm -- "$tmp"
@@ -325,10 +325,12 @@ _fzf_comprun() {
     esac
 }
 
+
 # -----------------------------
 # Bat Theme
 # -----------------------------
 export BAT_THEME=Dracula
+
 
 export LANG=en_IN.UTF-8
 export LC_ALL=en_IN.UTF-8
@@ -336,3 +338,11 @@ export LC_ALL=en_IN.UTF-8
 export PATH=$PATH:/home/jain/.spicetify
 export PATH="$PATH:$HOME/.spicetify"
 export PATH="$HOME/.cargo/bin:$PATH"
+
+# pipx
+export PATH="$PATH:/home/jain/.local/bin"
+autoload and run autoload:
+autoload -U compinit && compinit
+eval "$(register-python-argcomplete pipx)"
+autoload -U bashcompinit
+bashcompinit
