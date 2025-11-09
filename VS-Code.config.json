@@ -83,19 +83,6 @@
     "files.exclude": {
         "**/.git": false
     },
-
-    "cSpell.userWords": [
-        "bson",
-        "comprun",
-        "godotenv",
-        "gonic",
-        "joho",
-        "kfes",
-        "signup",
-        "Vyom",
-        "vyomop",
-        "yazi"
-    ],
     "git.enableSmartCommit": true,
     "git.confirmSync": false,
     "git.autofetch": true,
@@ -243,4 +230,7 @@
     "editor.overtypeCursorStyle": "line",
     "editor.defaultFormatter": "esbenp.prettier-vscode",
     "editor.formatOnPaste": true,
+    "[astro]": {
+        "editor.defaultFormatter": "astro-build.astro-vscode"
+    },
 }

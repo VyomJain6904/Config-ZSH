@@ -174,7 +174,7 @@ alias exir="exit"
 alias mk="mkdir"
 alias nr="sudo systemctl restart NetworkManager"
 alias ff="fastfetch"
-alias his="history | fzf --tac --preview 'echo {} | sed \"s/ *[0-9]* *//\" | bat --language sh --style=plain' | sed 's/ *[0-9]* *//' | xargs -r zsh -i -c"
+alias his="history | fzf --tac --preview 'echo {} | sed \"s/ *[0-9]* *//\" | bat --language sh --style=plain --paging=never' | sed 's/ *[0-9]* *//' | xargs -r zsh -i -c"
 alias zsrc="source ~/.zshrc"
 alias btop="btop --force-utf"
 alias z="zoxide"
@@ -183,7 +183,7 @@ alias z="zoxide"
 alias l="eza -la --icons --git --color=always --level=1 --no-time --no-user --tree"
 alias ll="eza -la --icons --git --color=always --level=2 --no-time --no-user --tree"
 alias lll="eza -la --icons --git --color=always --level=3 --no-time --no-user --tree"
-alias cat="bat"
+alias cat="bat -pp"
 alias f="spf"
 alias s="spf"
 alias cargoi="cargo-seek"
@@ -310,7 +310,7 @@ fzf() {
 _fzf_compgen_path() { fd --exclude .git . "$1"; }
 _fzf_compgen_dir()  { fd --type=d --exclude .git . "$1"; }
 
-show_file_or_dir_preview="if [ -d {} ]; then eza --tree --color=always {} | head -200; else bat -n --color=always --line-range :500 {}; fi"
+show_file_or_dir_preview="if [ -d {} ]; then eza --tree --color=always {} | head -200; else batcat -n --color=always --line-range :500 {}; fi"
 
 export FZF_CTRL_T_OPTS="--preview '$show_file_or_dir_preview'"
 export FZF_ALT_C_OPTS="--preview 'eza --tree --color=always {} | head -200'"
