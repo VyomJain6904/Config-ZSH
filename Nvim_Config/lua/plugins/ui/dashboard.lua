@@ -43,7 +43,9 @@ return {
                     key = "f",
                     keymap = "SPC f f",
                     key_hl = "Number",
-                    action = "Telescope find_files",
+                    action = function()
+                        require("telescope.builtin").find_files()
+                    end,
                 },
                 {
                     icon = " ",
@@ -51,7 +53,9 @@ return {
                     key = "r",
                     keymap = "SPC f r",
                     key_hl = "Number",
-                    action = "Telescope oldfiles",
+                    action = function()
+                        require("telescope.builtin").oldfiles()
+                    end,
                 },
                 {
                     icon = " ",
@@ -67,7 +71,11 @@ return {
                     key = "d",
                     keymap = "SPC f d",
                     key_hl = "Number",
-                    action = "Telescope find_files cwd=" .. vim.fn.expand("~/.dotfiles"),
+                    action = function()
+                            require("telescope.builtin").find_files({
+                                cwd = vim.fn.expand("~/.dotfiles")
+                            })
+                        end,
                 },
                 {
                     icon = "󰩈 ",
