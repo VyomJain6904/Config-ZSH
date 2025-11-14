@@ -25,6 +25,6 @@ scrollback-limit = 100000
 
 keybind = performable:ctrl+c=copy_to_clipboard
 keybind = performable:ctrl+v=paste_from_clipboard
-keybind = performable:ctrl+shift+v=new_split:right
-keybind = performable:ctrl+shift+h=new_split:down
-keybind = performable:ctrl+w=close_ta
+keybind = performable:ctrl+shift+s=new_split:right
+keybind = performable:ctrl+shift+d=new_split:down
+keybind = performable:ctrl+w=close_tab
