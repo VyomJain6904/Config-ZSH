@@ -11,7 +11,7 @@ require 'lazy-init'
 vim.api.nvim_create_autocmd("User", {
     pattern = "VeryLazy",
     callback = function()
-        -- General Editor
+        -- General Editor Transparent Background
         vim.cmd [[
             hi Normal guibg=none ctermbg=none
             hi NormalNC guibg=none ctermbg=none
@@ -43,5 +43,5 @@ vim.api.nvim_create_autocmd("User", {
             hi LspInfoBorder guibg=none ctermbg=none
             hi DiagnosticFloatBg guibg=none ctermbg=none
         ]]
-    end,
+    end
 })
