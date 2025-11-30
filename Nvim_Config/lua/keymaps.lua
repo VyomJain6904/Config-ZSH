@@ -1,7 +1,7 @@
 local keymap = vim.keymap
 local opts = {
     noremap = true,
-    silent = true
+    silent = true,
 }
 
 -- Clear highlights on search when pressing <Esc> in normal mode
@@ -22,7 +22,7 @@ vim.keymap.set('n', '<leader>cr', function()
     vim.lsp.buf.rename()
 end, {
     expr = true,
-    desc = 'LSP Rename'
+    desc = 'LSP Rename',
 })
 
 -- Buffer functions
@@ -39,36 +39,36 @@ end
 
 -- Buffers
 keymap.set('n', '<S-h>', '<cmd>bprevious<cr>', {
-    desc = 'Prev Buffer'
+    desc = 'Prev Buffer',
 })
 keymap.set('n', '<S-l>', '<cmd>bnext<cr>', {
-    desc = 'Next Buffer'
+    desc = 'Next Buffer',
 })
 keymap.set('n', '[b', '<cmd>bprevious<cr>', {
-    desc = 'Prev Buffer'
+    desc = 'Prev Buffer',
 })
 keymap.set('n', ']b', '<cmd>bnext<cr>', {
-    desc = 'Next Buffer'
+    desc = 'Next Buffer',
 })
 keymap.set('n', '<leader>bd', '<cmd>bdelete<CR>', {
-    desc = 'Delete Buffer'
+    desc = 'Delete Buffer',
 })
 keymap.set('n', '<leader>bo', delete_other_buffers, {
-    desc = 'Delete Other Buffers'
+    desc = 'Delete Other Buffers',
 })
 keymap.set('n', '<leader>bD', '<cmd>:bd<cr>', {
-    desc = 'Delete Buffer and Window'
+    desc = 'Delete Buffer and Window',
 })
 
 -- Highlight when yanking (copying) text
 vim.api.nvim_create_autocmd('TextYankPost', {
     desc = 'Highlight when yanking (copying) text',
     group = vim.api.nvim_create_augroup('kickstart-highlight-yank', {
-        clear = true
+        clear = true,
     }),
     callback = function()
         vim.highlight.on_yank()
-    end
+    end,
 })
 
 -- Better indenting
@@ -77,26 +77,26 @@ keymap.set('v', '>', '>gv')
 
 -- Custom keymaps
 -- Copy Line Down (Shift + Alt + Down)
-keymap.set("n", "<S-A-Down>", "yyp", opts)
+keymap.set('n', '<S-A-Down>', 'yyp', opts)
 
 -- Copy Line Up (Shift + Alt + Up)
-keymap.set("n", "<S-A-Up>", "yyP", opts)
+keymap.set('n', '<S-A-Up>', 'yyP', opts)
 
 -- Open Folder (Ctrl + O)
 -- Equivalent: open file browser in Neovim
-keymap.set("n", "<C-o>", ":Oil<CR>", opts) -- If using oil.nvim
+keymap.set('n', '<C-o>', ':Oil<CR>', opts) -- If using oil.nvim
 -- OR if using netrw
 -- keymap.set("n", "<C-o>", ":Ex<CR>", opts)
 
 -- Multiple cursors (Ctrl+Shift+Up / Ctrl+Shift+Down)
 -- Using vim-visual-multi plugin
-keymap.set("n", "<C-S-Up>", "<Plug>(VM-Add-Cursor-Up)", {})
-keymap.set("n", "<C-S-Down>", "<Plug>(VM-Add-Cursor-Down)", {})
+keymap.set('n', '<C-S-Up>', '<Plug>(VM-Add-Cursor-Up)', {})
+keymap.set('n', '<C-S-Down>', '<Plug>(VM-Add-Cursor-Down)', {})
 
 -- Move Line Up/Down (Alt + Up / Alt + Down)
-keymap.set("n", "<A-Up>", ":m .-2<CR>==", opts)
-keymap.set("n", "<A-Down>", ":m .+1<CR>==", opts)
+keymap.set('n', '<A-Up>', ':m .-2<CR>==', opts)
+keymap.set('n', '<A-Down>', ':m .+1<CR>==', opts)
 
 -- For visual mode (VS Code behavior)
-keymap.set("v", "<A-Up>", ":m '<-2<CR>gv=gv", opts)
-keymap.set("v", "<A-Down>", ":m '>+1<CR>gv=gv", opts)
+keymap.set('v', '<A-Up>', ":m '<-2<CR>gv=gv", opts)
+keymap.set('v', '<A-Down>', ":m '>+1<CR>gv=gv", opts)
